@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					hover: 'hsl(var(--primary-hover))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -61,7 +62,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom Dorama Colors
+				dorama: {
+					pink: 'hsl(var(--dorama-pink))',
+					'pink-light': 'hsl(var(--dorama-pink-light))',
+					lavender: 'hsl(var(--dorama-lavender))',
+					purple: 'hsl(var(--dorama-purple))',
+					gold: 'hsl(var(--dorama-gold))',
+					rose: 'hsl(var(--dorama-rose))'
 				}
+			},
+			backgroundImage: {
+				'gradient-romantic': 'var(--gradient-romantic)',
+				'gradient-premium': 'var(--gradient-premium)',
+				'gradient-hero': 'var(--gradient-hero)'
+			},
+			boxShadow: {
+				'romantic': 'var(--shadow-romantic)',
+				'card-dorama': 'var(--shadow-card)',
+				'premium': 'var(--shadow-premium)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
