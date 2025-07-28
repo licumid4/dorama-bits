@@ -77,52 +77,47 @@ export type Database = {
         }
         Relationships: []
       }
-      purchases: {
+      subscriptions: {
         Row: {
-          amount: number
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           expires_at: string | null
           id: string
-          payment_reference: string | null
-          status: string | null
+          payment_proof_url: string | null
+          starts_at: string | null
+          status: string
           updated_at: string
           user_id: string
-          video_id: string
-          yampi_transaction_id: string | null
+          whatsapp_number: string | null
         }
         Insert: {
-          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
-          payment_reference?: string | null
-          status?: string | null
+          payment_proof_url?: string | null
+          starts_at?: string | null
+          status?: string
           updated_at?: string
           user_id: string
-          video_id: string
-          yampi_transaction_id?: string | null
+          whatsapp_number?: string | null
         }
         Update: {
-          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
-          payment_reference?: string | null
-          status?: string | null
+          payment_proof_url?: string | null
+          starts_at?: string | null
+          status?: string
           updated_at?: string
           user_id?: string
-          video_id?: string
-          yampi_transaction_id?: string | null
+          whatsapp_number?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "purchases_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "videos"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       videos: {
         Row: {
@@ -132,10 +127,11 @@ export type Database = {
           embed_code: string
           id: string
           is_active: boolean | null
-          price: number | null
+          tags: string[] | null
           thumbnail_url: string
           title: string
           updated_at: string
+          video_url: string | null
           views_count: number | null
         }
         Insert: {
@@ -145,10 +141,11 @@ export type Database = {
           embed_code: string
           id?: string
           is_active?: boolean | null
-          price?: number | null
+          tags?: string[] | null
           thumbnail_url: string
           title: string
           updated_at?: string
+          video_url?: string | null
           views_count?: number | null
         }
         Update: {
@@ -158,10 +155,11 @@ export type Database = {
           embed_code?: string
           id?: string
           is_active?: boolean | null
-          price?: number | null
+          tags?: string[] | null
           thumbnail_url?: string
           title?: string
           updated_at?: string
+          video_url?: string | null
           views_count?: number | null
         }
         Relationships: [
@@ -179,6 +177,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_active_subscription: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
       has_video_access: {
         Args: { video_uuid: string; user_uuid: string }
         Returns: boolean

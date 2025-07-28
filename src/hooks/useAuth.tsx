@@ -7,11 +7,13 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: any | null;
+  subscription: any | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  hasActiveSubscription: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,6 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
+  const [subscription, setSubscription] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch user profile
+          // Fetch user profile and subscription
           setTimeout(async () => {
             try {
               const { data: profileData } = await supabase
@@ -39,12 +42,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 .eq('user_id', session.user.id)
                 .single();
               setProfile(profileData);
+
+              // Fetch subscription data
+              const { data: subscriptionData } = await supabase
+                .from('subscriptions')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .eq('status', 'active')
+                .single();
+              setSubscription(subscriptionData);
             } catch (error) {
-              console.error('Error fetching profile:', error);
+              console.error('Error fetching profile or subscription:', error);
             }
           }, 0);
         } else {
           setProfile(null);
+          setSubscription(null);
         }
         
         setLoading(false);
@@ -125,16 +138,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const isAdmin = profile?.role === 'admin';
+  const hasActiveSubscription = subscription && new Date(subscription.expires_at) > new Date();
 
   const value = {
     user,
     session,
     profile,
+    subscription,
     loading,
     signIn,
     signUp,
     signOut,
     isAdmin,
+    hasActiveSubscription,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
