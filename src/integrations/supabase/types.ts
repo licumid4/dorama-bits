@@ -82,6 +82,7 @@ export type Database = {
           approved_at: string | null
           approved_by: string | null
           created_at: string
+          email: string | null
           expires_at: string | null
           id: string
           starts_at: string | null
@@ -93,6 +94,7 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string
+          email?: string | null
           expires_at?: string | null
           id?: string
           starts_at?: string | null
@@ -104,6 +106,7 @@ export type Database = {
           approved_at?: string | null
           approved_by?: string | null
           created_at?: string
+          email?: string | null
           expires_at?: string | null
           id?: string
           starts_at?: string | null

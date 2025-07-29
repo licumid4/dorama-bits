@@ -48,6 +48,7 @@ export default function Subscription() {
         .from('subscriptions')
         .insert({
           user_id: user.id,
+          email: user.email,
           status: 'pending'
         });
 
