@@ -84,12 +84,10 @@ export type Database = {
           created_at: string
           expires_at: string | null
           id: string
-          payment_proof_url: string | null
           starts_at: string | null
           status: string
           updated_at: string
           user_id: string
-          whatsapp_number: string | null
         }
         Insert: {
           approved_at?: string | null
@@ -97,12 +95,10 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
-          payment_proof_url?: string | null
           starts_at?: string | null
           status?: string
           updated_at?: string
           user_id: string
-          whatsapp_number?: string | null
         }
         Update: {
           approved_at?: string | null
@@ -110,12 +106,10 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
-          payment_proof_url?: string | null
           starts_at?: string | null
           status?: string
           updated_at?: string
           user_id?: string
-          whatsapp_number?: string | null
         }
         Relationships: []
       }
