@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -17,13 +17,14 @@ import {
 // Componente para o Modal de Checkout
 function CheckoutModal({ checkoutUrl, onClose }) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-lg h-full max-h-[90vh] relative flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-md h-full max-h-[95vh] relative flex flex-col">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 z-10"
+          className="absolute top-2 right-2 p-1 bg-gray-100 rounded-full text-gray-600 hover:text-gray-900 hover:bg-gray-200 z-10"
+          aria-label="Fechar"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5" />
         </button>
         <iframe
           src={checkoutUrl}
@@ -42,6 +43,38 @@ export default function Subscription() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
 
+  // Efeito para ouvir a confirmação de pagamento do iframe
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Verificação de segurança: aceite mensagens apenas da sua URL de pagamento
+      if (event.origin !== 'https://pay.shortsdorama.shop') {
+        return;
+      }
+
+      if (event.data === 'paymentSuccess') {
+        setShowCheckout(false); // Fecha o modal
+        toast({
+          title: "Pagamento Aprovado!",
+          description: "Sua assinatura foi ativada com sucesso. A página será atualizada.",
+          className: "bg-green-100 border-green-300 text-green-800",
+        });
+        
+        // Aguarda um pouco para o usuário ler o toast e recarrega a página
+        // para refletir o novo status da assinatura.
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Limpa o event listener quando o componente é desmontado
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []); // O array vazio garante que isso rode apenas uma vez
+
   const handlePaymentClick = async () => {
     if (!user) {
       toast({
@@ -56,36 +89,24 @@ export default function Subscription() {
 
     try {
       // Garante que existe uma assinatura pendente antes de abrir o checkout
-      // Isso é útil para rastrear quem iniciou um pagamento
-      const { data, error: fetchError } = await supabase
+      const { error: insertError } = await supabase
         .from('subscriptions')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('status', 'pending')
-        .maybeSingle();
-
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows found
-        throw fetchError;
-      }
-
-      if (!data) {
-        const { error: insertError } = await supabase
-          .from('subscriptions')
-          .insert({
+        .upsert({
             user_id: user.id,
             email: user.email,
             status: 'pending'
-          });
-        if (insertError) throw insertError;
-      }
+        }, { onConflict: 'user_id' }); // Usa upsert para criar ou atualizar, evitando erros de duplicidade
+
+      if (insertError) throw insertError;
 
       // Abre o modal de checkout
       setShowCheckout(true);
 
     } catch (error) {
+      console.error("Erro ao iniciar pagamento no Supabase:", error); // Log detalhado no console
       toast({
-        title: "Erro",
-        description: "Não foi possível iniciar o pagamento. Tente novamente.",
+        title: "Erro ao Iniciar Pagamento",
+        description: error.message || "Não foi possível registrar sua solicitação. Verifique os logs do console para mais detalhes.",
         variant: "destructive",
       });
     } finally {
@@ -111,7 +132,6 @@ export default function Subscription() {
 
   return (
     <>
-      {/* O Modal de Checkout será renderizado aqui quando showCheckout for true */}
       {showCheckout && (
         <CheckoutModal
           checkoutUrl={`https://pay.shortsdorama.shop/index.php?email=${encodeURIComponent(user.email)}`}
@@ -234,3 +254,4 @@ export default function Subscription() {
       </div>
     </>
   );
+}
