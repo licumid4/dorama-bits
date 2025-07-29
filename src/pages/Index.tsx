@@ -116,10 +116,10 @@ const Index = () => {
 
         {/* Doramas Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 place-items-center">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
-                <div className="w-full h-96 bg-gray-300"></div>
+              <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse w-80">
+                <div className="w-80 h-96 bg-gray-300"></div>
                 <div className="p-4">
                   <div className="h-4 bg-gray-300 rounded mb-2"></div>
                   <div className="h-3 bg-gray-300 rounded"></div>
@@ -128,7 +128,7 @@ const Index = () => {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 place-items-center">
             {filteredVideos.map((video) => (
               <DoramaCard key={video.id} video={video} />
             ))}

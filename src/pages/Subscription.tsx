@@ -3,8 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Header } from '@/components/Header';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -20,12 +18,10 @@ import {
 export default function Subscription() {
   const { user, subscription, hasActiveSubscription } = useAuth();
   const navigate = useNavigate();
-  const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [paymentProofUrl, setPaymentProofUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pixKey = 'd3cbb30a-5a7f-46b8-b922-e44c8f9c4a25';
-  const whatsappLink = '(11) 93758-7626';
+  const whatsappNumber = '(11) 93758-7626';
 
   const copyPixKey = () => {
     navigator.clipboard.writeText(pixKey);
@@ -45,15 +41,6 @@ export default function Subscription() {
       return;
     }
 
-    if (!whatsappNumber || !paymentProofUrl) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha o número do WhatsApp e o link do comprovante.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -61,8 +48,6 @@ export default function Subscription() {
         .from('subscriptions')
         .insert({
           user_id: user.id,
-          whatsapp_number: whatsappNumber,
-          payment_proof_url: paymentProofUrl,
           status: 'pending'
         });
 
@@ -70,11 +55,8 @@ export default function Subscription() {
 
       toast({
         title: "Solicitação enviada!",
-        description: "Sua solicitação de plano foi enviada. Aguarde a aprovação.",
+        description: "Entre em contato pelo WhatsApp para confirmar o pagamento.",
       });
-
-      setWhatsappNumber('');
-      setPaymentProofUrl('');
     } catch (error) {
       toast({
         title: "Erro",
@@ -219,31 +201,27 @@ export default function Subscription() {
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-blue-900 mb-3 flex items-center">
                       <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">2</span>
-                      Envie o comprovante
+                      Entre em contato pelo WhatsApp
                     </h3>
                     
                     <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="whatsapp">Seu WhatsApp</Label>
-                        <Input
-                          id="whatsapp"
-                          placeholder="(11) 99999-9999"
-                          value={whatsappNumber}
-                          onChange={(e) => setWhatsappNumber(e.target.value)}
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="proof">Link do Comprovante</Label>
-                        <Input
-                          id="proof"
-                          placeholder="Cole o link da imagem do comprovante"
-                          value={paymentProofUrl}
-                          onChange={(e) => setPaymentProofUrl(e.target.value)}
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Suba a imagem no Google Drive, Imgur ou similar e cole o link
-                        </p>
+                      <p className="text-sm text-blue-800 mb-3">
+                        Após fazer o PIX, entre em contato conosco pelo WhatsApp para confirmar o pagamento e ativar seu plano.
+                      </p>
+
+                      <div className="flex items-center justify-between bg-white p-3 rounded border border-blue-200">
+                        <div className="flex items-center">
+                          <MessageCircle className="w-5 h-5 text-green-600 mr-3" />
+                          <span className="font-medium text-blue-900">{whatsappNumber}</span>
+                        </div>
+                        <Button
+                          onClick={() => window.open(`https://wa.me/5511937587626?text=Olá! Fiz o PIX de R$ 20,00 para ativar meu plano premium. Meu email: ${user?.email}`, '_blank')}
+                          size="sm"
+                          variant="default"
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          Abrir WhatsApp
+                        </Button>
                       </div>
 
                       <Button
@@ -252,23 +230,12 @@ export default function Subscription() {
                         className="w-full"
                         variant="premium"
                       >
-                        {isSubmitting ? 'Enviando...' : 'Solicitar Ativação'}
+                        {isSubmitting ? 'Enviando...' : 'Registrar Solicitação'}
                       </Button>
-                    </div>
-                  </div>
-
-                  {/* Passo 3 */}
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-green-900 mb-2 flex items-center">
-                      <span className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-2">3</span>
-                      Confirmação via WhatsApp
-                    </h3>
-                    <p className="text-sm text-green-800 mb-2">
-                      Envie também o comprovante para nosso WhatsApp:
-                    </p>
-                    <div className="flex items-center">
-                      <MessageCircle className="w-4 h-4 text-green-600 mr-2" />
-                      <span className="font-medium text-green-900">{whatsappLink}</span>
+                      
+                      <p className="text-xs text-gray-500 text-center">
+                        Clique aqui para registrar sua solicitação no sistema após entrar em contato
+                      </p>
                     </div>
                   </div>
                 </CardContent>

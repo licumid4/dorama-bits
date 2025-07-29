@@ -28,7 +28,8 @@ import {
   Trash2, 
   Users, 
   Video,
-  CreditCard
+  CreditCard,
+  MessageCircle
 } from 'lucide-react';
 
 export default function AdminPanel() {
@@ -281,8 +282,8 @@ export default function AdminPanel() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Usuário</TableHead>
-                        <TableHead>WhatsApp</TableHead>
-                        <TableHead>Comprovante</TableHead>
+                        <TableHead>Contato</TableHead>
+                        <TableHead>Método</TableHead>
                         <TableHead>Data</TableHead>
                         <TableHead>Ações</TableHead>
                       </TableRow>
@@ -291,26 +292,24 @@ export default function AdminPanel() {
                       {pendingSubscriptions.map((subscription) => (
                         <TableRow key={subscription.id}>
                         <TableCell>
-                          <div>
-                            <div className="text-sm text-gray-500">
-                              ID: {subscription.user_id.slice(0, 8)}...
-                            </div>
-                          </div>
-                        </TableCell>
-                          <TableCell>{subscription.whatsapp_number}</TableCell>
+                           <div>
+                             <div className="text-sm text-gray-500">
+                               ID: {subscription.user_id.slice(0, 8)}...
+                             </div>
+                           </div>
+                         </TableCell>
                           <TableCell>
-                            {subscription.payment_proof_url ? (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.open(subscription.payment_proof_url, '_blank')}
-                              >
-                                Ver Comprovante
-                              </Button>
-                            ) : (
-                              <span className="text-gray-400">Sem comprovante</span>
-                            )}
+                            <Button
+                              onClick={() => window.open(`https://wa.me/5511937587626?text=Olá! Usuário ${subscription.user_id.slice(0, 8)}... solicitou ativação do plano premium.`, '_blank')}
+                              size="sm"
+                              variant="outline"
+                              className="bg-green-50 hover:bg-green-100"
+                            >
+                              <MessageCircle className="w-4 h-4 mr-1" />
+                              Contatar
+                            </Button>
                           </TableCell>
+                          <TableCell>Via WhatsApp</TableCell>
                           <TableCell>
                             {new Date(subscription.created_at).toLocaleDateString('pt-BR')}
                           </TableCell>

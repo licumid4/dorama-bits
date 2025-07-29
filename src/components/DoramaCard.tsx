@@ -25,17 +25,16 @@ export const DoramaCard = ({ video }: DoramaCardProps) => {
 
   return (
     <Card 
-      className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white border-rose-100"
+      className="group cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105 bg-white border-rose-100 w-80 mx-auto"
       onClick={handleClick}
     >
       <CardContent className="p-0">
-        {/* Fixed size container for thumbnail */}
-        <div className="relative overflow-hidden rounded-t-lg" style={{ width: '100%', height: '480px' }}>
+        {/* Fixed size container for thumbnail - 320x480 */}
+        <div className="relative overflow-hidden rounded-t-lg w-80 h-96">
           <img
             src={video.thumbnail_url}
             alt={video.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            style={{ minHeight: '480px' }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
